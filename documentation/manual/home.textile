@@ -5,11 +5,13 @@ This modules simplifies deployment of Play 1.2.x application instances to Linux 
 h2. Usage
 
 Deploy production instance and start it
+
 bc. play deploy:update
 play deploy:start
 
 Deploy test instance (uses parameters in application.conf, deploy.test.host=...)
-bc. play deploy:update --instance=test
+
+bc.play deploy:update --instance=test
 
 
 h2. Configuration
@@ -37,7 +39,7 @@ Note, you may want to setup SSH keys for even easier deployment.
 
 h2. Commands
 
-play deploy:update
+bc. play deploy:update
 play deploy:start
 play deploy:stop
 play deploy:restart
