@@ -1,0 +1,43 @@
+h1. Play rsync & ssh deployment support
+
+This modules simplifies deployment of Play 1.2.x application instances to Linux servers. Changes are pushed to servers using rsync and can be started, stopped and restarted over SSH.
+
+h2. Usage
+
+Deploy production instance and start it
+bc. play deploy:update
+play deploy:start
+
+Deploy test instance (uses parameters in application.conf, deploy.test.host=...)
+bc. play deploy:update --instance=test
+
+
+h2. Configuration
+
+Your deployment options can be either in application.conf or supplied on the command line. Command line arguments will override anything defined in application.conf.
+
+The default instance's parameters will always be loaded,
+
+bc. deploy.default.host = ip/server
+deploy.default.path = remote path
+deploy.default.port = port to start app on
+deploy.default.login = ssh login to server
+deploy.default.play_path = path to play binary
+
+An instance uses default values for the parameter it doesn't define (login, host, play_path in this case). To setup a test instance on the same host but changing only the port and path yyou define:
+
+bc. deploy.test.port = ...
+deploy.test.path = ...
+
+You can add any number of instance and use them with the --instance=INSTANCE command line argument
+
+bc. deploy.INSTANCE.host = ...
+
+Note, you may want to setup SSH keys for even easier deployment.
+
+h2. Commands
+
+play deploy:update
+play deploy:start
+play deploy:stop
+play deploy:restart

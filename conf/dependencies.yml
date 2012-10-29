@@ -1,0 +1,4 @@
+self: play -> deploy 0.1
+
+require:
+    - play
