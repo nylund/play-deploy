@@ -43,3 +43,4 @@ bc. play deploy:update
 play deploy:start
 play deploy:stop
 play deploy:restart
+
