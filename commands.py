@@ -112,7 +112,13 @@ def cmdStart(app, args):
     remoteCmd += "nice -n 19 " + play_path + " dependencies " + app.name() + ";"
     remoteCmd += "nice -n 19 " + play_path + " precompile " + app.name() + ";"
     #remoteCmd += "rm -f " + app.name() + "/server.pid;"
-    remoteCmd += play_path + " start " + app.name() + " -Dprecompiled=true\""
+    remoteCmd += play_path + " start " + app.name() + " -Dprecompiled=true"
+
+    if (parameters["port"] != None):
+        print "Using port: " + parameters["port"]
+        remoteCmd += " -Dhttp.port=" + parameters["port"]
+
+    remoteCmd += "\""
 
     return os.system(parameters["ssh"] + remoteCmd)
 
