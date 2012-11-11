@@ -5,7 +5,7 @@ MODULE = 'deploy'
 
 # Commands that are specific to your module
 
-COMMANDS = ['deploy:hello', 'deploy:update', 'deploy:start', 'deploy:stop', 'deploy:restart']
+COMMANDS = ['deploy:update', 'deploy:start', 'deploy:stop', 'deploy:restart']
 
 def which(program):
     def is_exe(fpath):
@@ -114,10 +114,9 @@ def cmdStart(app, args):
     #remoteCmd += "rm -f " + app.name() + "/server.pid;"
     remoteCmd += play_path + " start " + app.name() + " -Dprecompiled=true"
 
-    if (parameters["port"] != None):
+    if parameters["port"] != "":
         print "Using port: " + parameters["port"]
-        remoteCmd += " -Dhttp.port=" + parameters["port"]
-
+        remoteCmd += " --http.port=" + parameters["port"]
     remoteCmd += "\""
 
     return os.system(parameters["ssh"] + remoteCmd)
