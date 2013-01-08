@@ -24,9 +24,10 @@ bc. deploy.default.host = ip/server
 deploy.default.path = remote path
 deploy.default.port = port to start app on
 deploy.default.login = ssh login to server
-deploy.default.play_path = path to play binary
+deploy.default.play_path = path to play binary on remote host
+deploy.default.ssh_key = local path to SSH Key (useful with EC2)
 
-An instance uses default values for the parameter it doesn't define (login, host, play_path in this case). To setup a test instance on the same host but changing only the port and path yyou define:
+An instance uses default values for the parameter it doesn't define (login, host, play_path in this case). To setup a test instance on the same host but changing only the port and path you define:
 
 bc. deploy.test.port = ...
 deploy.test.path = ...

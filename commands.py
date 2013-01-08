@@ -7,6 +7,7 @@ MODULE = 'deploy'
 
 COMMANDS = ['deploy:update', 'deploy:start', 'deploy:stop', 'deploy:restart']
 
+# Checks if binary exists on path
 def which(program):
     def is_exe(fpath):
         return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
@@ -30,22 +31,24 @@ def getArg(args, findThis):
     return None
 
 def getParameters(app, args):
-    host = app.readConf('deploy.default.host')
-    path = app.readConf('deploy.default.path')
-    port = app.readConf('deploy.default.port')
-    login = app.readConf('deploy.default.login')
-    excludes = app.readConf('deploy.default.excludes')
-    play_path = app.readConf('deploy.default.play_path')
+    # Parameters have the following priority (highest first):
+    # - Command line arguments
+    # - Instance defined with --instance command line argument
+    # - default instance in application.conf
 
+    # Read default or 'instance' from application.conf
     instance = getArg(args, 'instance')
-    if instance != None:
-        host = app.readConf('deploy.' + instance + '.host')
-        path = app.readConf('deploy.' + instance + '.path')
-        port = app.readConf('deploy.' + instance + '.port')
-        login = app.readConf('deploy.' + instance + '.login')
-        excludes = app.readConf('deploy.' + instance + '.excludes')
-        play_path = app.readConf('deploy.' + instance + '.play_path')
+    if instance == None:
+        instance = 'default'
+    host = app.readConf('deploy.' + instance + '.host')
+    path = app.readConf('deploy.' + instance + '.path')
+    port = app.readConf('deploy.' + instance + '.port')
+    login = app.readConf('deploy.' + instance + '.login')
+    excludes = app.readConf('deploy.' + instance + '.excludes')
+    play_path = app.readConf('deploy.' + instance + '.play_path')
+    ssh_key = app.readConf('deploy.' + instance + '.ssh_key')
 
+    # Read command line arguments
     if getArg(args, 'host') != None:
         host = getArg(args, 'host')
     if getArg(args, 'path') != None:
@@ -58,6 +61,8 @@ def getParameters(app, args):
         excludes = getArg(args, 'excludes')
     if getArg(args, 'play_path') != None:
         play_path = getArg(args, 'play_path')
+    if getArg(args, 'ssh_key') != None:
+        play_path = getArg(args, 'ssh_key')
 
     if host == "":
         print "deploy: No host specified"
@@ -85,7 +90,11 @@ def getParameters(app, args):
     parameters["excludes"] = excludes
     parameters["play_path"] = play_path
     parameters["cmd"] = cmd
-    parameters["ssh"] = "ssh " + login + "@" + host
+    if ssh_key != "":
+        parameters["ssh"] = "ssh -i " + ssh_key + " " + login + "@" + host
+    else:
+        parameters["ssh"] = "ssh " + login + "@" + host
+    parameters["ssh_key"] = ssh_key
 
     return parameters
 
@@ -102,6 +111,8 @@ def cmdUpdate(app, args):
     print "~ Updating files for " + parameters["cmd"] + ". port=" + parameters["port"]
     print "~ Skipping " + ", ".join(excludesList)
 
+    if parameters["ssh_key"] != "":
+        return os.system("rsync -avzrc -e \"ssh -i " + parameters["ssh_key"] + "\" " + exclude + " " + app.path + " " + parameters["cmd"])
     return os.system("rsync -avzrc " + exclude + " " + app.path + " " + parameters["cmd"])
 
 def cmdStart(app, args):
